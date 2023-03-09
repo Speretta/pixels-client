@@ -10,10 +10,10 @@ use canvas::CanvasContainer;
 use state::{State, ToolType};
 
 mod canvas;
+mod file_dialog;
 mod input;
 mod panel;
 mod state;
-mod file_dialog;
 
 #[derive(Parser)]
 pub struct Args {
@@ -107,4 +107,3 @@ pub fn calculate_center(canvas: &Canvas) -> Vec2 {
 pub fn mouse_world_pos(camera: Camera2D) -> Vec2 {
     camera.screen_to_world(vec2(mouse_position().0, mouse_position().1))
 }
-

@@ -68,7 +68,6 @@ pub fn draw(state: ResMut<State>, mut file_dialog: NonSendMut<FileDialog>) {
             {
                 state.selected_tool = ToolType::Placer;
                 state.image = file_dialog.show().map(Element::new);
-                
             }
         );
     });

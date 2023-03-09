@@ -62,7 +62,7 @@ pub fn update_tool_draw(mut state: ResMut<State>, mut container: ResMut<CanvasCo
                 .set_pixel(pos.x as u32, pos.y as u32, Color::from(state.color))
         {
             match e {
-                CanvasError::Client(_e) => {
+                CanvasError::ClientError => {
                     panic!("couldn't set pixel");
                 }
                 CanvasError::Cooldown(cooldown) => {
