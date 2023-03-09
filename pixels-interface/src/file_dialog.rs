@@ -37,7 +37,7 @@ impl FileDialog {
     }
 
     #[cfg(not(target_os = "macos"))]
-    pub fn show() -> Option<PathBuf>{
+    pub fn show(&self) -> Option<PathBuf>{
         rfd::FileDialog::new()
         .add_filter("PNG Image", &["png"])
         .add_filter("JPEG Image", &["jpg", "jpeg"])

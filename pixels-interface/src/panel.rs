@@ -67,14 +67,7 @@ pub fn draw(state: ResMut<State>, mut file_dialog: NonSendMut<FileDialog>) {
             state.menu_state.image_icon,
             {
                 state.selected_tool = ToolType::Placer;
-                #[cfg(not(target_os = "macos"))]
-                {
-                    state.image = FileDialog::show().map(Element::new);
-                }
-                #[cfg(target_os = "macos")]
-                {
-                    state.image = file_dialog.show(ctx).map(Element::new);
-                }
+                state.image = file_dialog.show().map(Element::new);
                 
             }
         );
