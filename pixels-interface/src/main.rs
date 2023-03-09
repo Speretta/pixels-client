@@ -1,9 +1,8 @@
 use bevy_time::Time;
 use clap::Parser;
 
-use rfd::{FileDialog, MessageButtons, MessageDialog};
-
 use bevy_ecs::prelude::*;
+use file_dialog::FileDialog;
 use macroquad::prelude::*;
 use pixels_canvas::prelude::*;
 
@@ -14,6 +13,7 @@ mod canvas;
 mod input;
 mod panel;
 mod state;
+mod file_dialog;
 
 #[derive(Parser)]
 pub struct Args {
@@ -28,12 +28,11 @@ struct App {
 }
 
 fn main() {
-    let element = get_element();
-    macroquad::Window::new("Pixels Client", entry(element));
+    macroquad::Window::new("Pixels Client", entry());
 }
 
-async fn entry(image: Option<Element>) {
-    let mut app = App::new(Args::parse(), State::new(image));
+async fn entry() {
+    let mut app = App::new(Args::parse(), State::new());
 
     loop {
         app.update();
@@ -52,6 +51,7 @@ impl App {
         state.camera_state.position = calculate_center(&canvas);
 
         let mut draw_schedule = Schedule::default();
+        draw_schedule.add_system(panel::draw);
         let mut update_schedule = Schedule::default();
 
         update_schedule.add_systems((update_time, update_camera));
@@ -61,6 +61,7 @@ impl App {
 
         world.insert_resource(Time::default());
         world.insert_resource(state);
+        world.insert_non_send_resource(FileDialog::default());
 
         App {
             world,
@@ -76,7 +77,6 @@ impl App {
     fn draw(&mut self) {
         clear_background(DARKGRAY);
         self.draw_schedule.run(&mut self.world);
-        panel::draw(&mut self.world);
     }
 }
 
@@ -108,19 +108,3 @@ pub fn mouse_world_pos(camera: Camera2D) -> Vec2 {
     camera.screen_to_world(vec2(mouse_position().0, mouse_position().1))
 }
 
-fn get_element() -> Option<Element> {
-    let select = MessageDialog::new()
-        .set_buttons(MessageButtons::YesNo)
-        .set_description("would you like to select an image to paste?")
-        .show();
-    if !select {
-        return None;
-    }
-
-    let path = FileDialog::new()
-        .add_filter("PNG Image", &["png"])
-        .add_filter("JPEG Image", &["jpg", "jpeg"])
-        .set_directory("~")
-        .pick_file();
-    path.map(Element::new)
-}

@@ -3,10 +3,11 @@ use egui_macroquad::egui::{
 };
 
 use bevy_ecs::prelude::*;
+use pixels_canvas::prelude::Element;
 
 use super::{State, ToolType};
 
-use crate::{panel, tool_button, tool_button_if};
+use crate::{file_dialog::FileDialog, panel, tool_button};
 
 struct ToolButton {
     selected: bool,
@@ -14,8 +15,14 @@ struct ToolButton {
     size: Vec2,
 }
 
-pub fn draw(world: &mut World) {
-    panel!(world, |ctx: &Context, ui: &mut Ui, state: &mut State| {
+#[allow(unused_mut, unused_variables)]
+pub fn draw(state: ResMut<State>, mut file_dialog: NonSendMut<FileDialog>) {
+    panel!(state, |ctx: &Context,
+                   ui: &mut Ui,
+                   state: &mut ResMut<State>| {
+        #[cfg(target_os = "macos")]
+        file_dialog.as_mut().update(&ctx);
+
         ui.add_space(20.0);
         ui.color_edit_button_rgb(&mut state.color);
 
@@ -52,7 +59,7 @@ pub fn draw(world: &mut World) {
             }
         );
 
-        tool_button_if!(
+        tool_button!(
             ctx,
             ui,
             state,
@@ -60,8 +67,16 @@ pub fn draw(world: &mut World) {
             state.menu_state.image_icon,
             {
                 state.selected_tool = ToolType::Placer;
-            },
-            state.image.is_some()
+                #[cfg(not(target_os = "macos"))]
+                {
+                    state.image = FileDialog::show().map(Element::new);
+                }
+                #[cfg(target_os = "macos")]
+                {
+                    state.image = file_dialog.show(ctx).map(Element::new);
+                }
+                
+            }
         );
     });
 }
@@ -91,10 +106,8 @@ impl Widget for ToolButton {
 
 #[macro_export]
 macro_rules! panel {
-    ($world:expr, $body:expr $(,)?) => {
-        let mut res = $world.get_resource_mut::<State>().unwrap();
-        let mut state = res.as_mut();
-
+    ($state:expr, $body:expr $(,)?) => {
+        let mut state = $state;
         egui_macroquad::ui(|ctx| {
             if state.cooldown != 0.0 {
                 show_tooltip_at_pointer(ctx, Id::new("cooldown"), |ui| {
@@ -128,15 +141,6 @@ macro_rules! tool_button {
 
         if button.clicked() {
             $body
-        }
-    }};
-}
-
-#[macro_export]
-macro_rules! tool_button_if {
-    ($ctx:expr, $ui:expr, $state:expr, $tool:expr, $icon:expr, $body:block, $condition:expr) => {{
-        if $condition {
-            tool_button!($ctx, $ui, $state, $tool, $icon, $body);
         }
     }};
 }

@@ -40,9 +40,9 @@ pub enum ToolType {
 }
 
 impl State {
-    pub fn new(image: Option<Element>) -> Self {
+    pub fn new() -> Self {
         State {
-            image,
+            image: None,
             focus: false,
             color: [1.0; 3],
             cooldown: 0.0,
