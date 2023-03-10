@@ -101,8 +101,13 @@ macro_rules! panel {
         let mut state = $state;
         egui_macroquad::ui(|ctx| {
             if state.cooldown != 0.0 {
+                let percentage = if let ImageWorker::Working(iterator, _) = &state.image_worker{
+                    format!(", completed: {:.2}%", iterator.get_percantage())
+                }else{
+                    String::new()
+                };
                 show_tooltip_at_pointer(ctx, Id::new("cooldown"), |ui| {
-                    ui.label(format!("please wait {} secs", state.cooldown.round()));
+                    ui.label(format!("please wait {} secs{}", state.cooldown.round(), percentage));
                 });
             }
 

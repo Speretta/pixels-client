@@ -79,6 +79,10 @@ impl Color {
             a: self.a * inv_alpha + other.a * alpha,
         }
     }
+
+    pub fn is_transparent(&self) -> bool{
+        self.a == 0.0
+    }
 }
 
 from!([u8; 3], Color, |value: [u8; 3]| {

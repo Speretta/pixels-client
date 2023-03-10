@@ -98,6 +98,10 @@ impl PixelsIntoIterator {
     fn new(pixels: &Pixels) -> Self {
         Self { pixels: pixels.clone(), x: 0, y: 0 }
     }
+
+    pub fn get_percantage(&self) -> f32{
+        (self.y * self.pixels.width() + self.y) as f32 / (self.pixels.width() * self.pixels.height()) as f32 * 100.0
+    }
 }
 
 impl Iterator for PixelsIntoIterator {

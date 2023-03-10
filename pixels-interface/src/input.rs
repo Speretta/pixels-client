@@ -109,7 +109,13 @@ pub fn update_tool_place(mut state: ResMut<State>, mut container: ResMut<CanvasC
         }
     }else if let ImageWorker::Working(iterator, (mouse_x, mouse_y)) = &mut state.image_worker{
         if let Some(((pos_x, pos_y), color)) = iterator.next(){
-            container.canvas.set_pixel(*mouse_x + pos_x, *mouse_y + pos_y, color).expect("Bir sorun oluştu!");
+            if !color.is_transparent(){
+                container.canvas.set_pixel(*mouse_x + pos_x, *mouse_y + pos_y, color).expect("Bir sorun oluştu!");
+            }
+        }
+        if iterator.get_percantage() == 100.0{
+            println!("Image completed!");
+            state.image_worker =  ImageWorker::Image(None);
         }
     }
 }
