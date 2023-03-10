@@ -1,5 +1,7 @@
 
 
+use std::time::Instant;
+
 use egui_macroquad::egui::Pos2;
 
 use bevy_ecs::prelude::*;
@@ -105,12 +107,12 @@ pub fn update_tool_place(mut state: ResMut<State>, mut container: ResMut<CanvasC
     if let ImageWorker::Image(Some(image)) = &state.image_worker{
         if is_mouse_button_pressed(MouseButton::Left){
             let mouse_pos = super::mouse_world_pos(state.camera_state.instance);
-            state.image_worker = ImageWorker::Working(image.get_pixels().into_iter(), (mouse_pos.x as u32, mouse_pos.y as u32));
+            state.image_worker = ImageWorker::Working(image.get_pixels().into_iter(), (mouse_pos.x as u32, mouse_pos.y as u32), Instant::now());
         }
-    }else if let ImageWorker::Working(iterator, (mouse_x, mouse_y)) = &mut state.image_worker{
+    }else if let ImageWorker::Working(iterator, (mouse_x, mouse_y), _) = &mut state.image_worker{
         if let Some(((pos_x, pos_y), color)) = iterator.next(){
             if !color.is_transparent(){
-                container.canvas.set_pixel(*mouse_x + pos_x, *mouse_y + pos_y, color).expect("Bir sorun oluştu!");
+                container.canvas.set_pixel(*mouse_x + pos_x, *mouse_y + pos_y, color).expect("Muhtemelen süre bitmeden resim yerleştirilmeye çalışındı!");
             }
         }
         if iterator.get_percantage() == 100.0{

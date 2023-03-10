@@ -99,7 +99,7 @@ pub fn draw_image(mut state: ResMut<State>, mut container: ResMut<CanvasContaine
             .get_image_layer_mut()
             .draw(image.clone());
         },
-        ImageWorker::Working(iterator, pos) => {
+        ImageWorker::Working(iterator, pos, _) => {
             container.canvas.get_image_layer_mut().draw_iterator(*pos, iterator.clone());
         }
         _ => {}

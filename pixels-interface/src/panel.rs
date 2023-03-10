@@ -101,8 +101,10 @@ macro_rules! panel {
         let mut state = $state;
         egui_macroquad::ui(|ctx| {
             if state.cooldown != 0.0 {
-                let percentage = if let ImageWorker::Working(iterator, _) = &state.image_worker{
-                    format!(", completed: {:.2}%", iterator.get_percantage())
+                let percentage = if let ImageWorker::Working(iterator, _, instant) = &state.image_worker{
+                    let percentage = iterator.get_percantage();
+                    let remaining_time = instant.elapsed().as_secs_f32()*1.667/percentage;
+                    format!(", completed: {:.2}%, remaining time: {:.2} minutes", percentage, remaining_time)
                 }else{
                     String::new()
                 };

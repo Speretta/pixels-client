@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use egui_extras::RetainedImage;
 use egui_macroquad::egui::Rect;
 
@@ -93,7 +95,7 @@ impl Default for MenuState {
 }
 
 pub enum ImageWorker{
-    Working(PixelsIntoIterator, (u32 ,u32)),
+    Working(PixelsIntoIterator, (u32 ,u32), Instant),
     Image(Option<Element>),
 }
 
