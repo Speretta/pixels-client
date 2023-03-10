@@ -8,6 +8,7 @@ use pixels_util::prelude::PixelsIntoIterator;
 
 #[derive(Resource)]
 pub struct State {
+    pub image_worker: ImageWorker,
     pub focus: bool,
     pub color: [f32; 3],
     pub cooldown: f32,
@@ -36,12 +37,12 @@ pub enum ToolType {
     Mover,
     Brush,
     Picker,
-    Placer(Placer),
 }
 
 impl State {
     pub fn new() -> Self {
         State {
+            image_worker: ImageWorker::Image(None),
             focus: false,
             color: [1.0; 3],
             cooldown: 0.0,
@@ -91,15 +92,15 @@ impl Default for MenuState {
     }
 }
 
-pub enum Placer{
+pub enum ImageWorker{
     Working(PixelsIntoIterator, (u32 ,u32)),
     Image(Option<Element>),
 }
 
-impl PartialEq for Placer{
+impl PartialEq for ImageWorker{
     fn eq(&self, other: &Self) -> bool {
         std::mem::discriminant(self) == std::mem::discriminant(other)
     }
 }
 
-impl Eq for Placer{}
+impl Eq for ImageWorker{}

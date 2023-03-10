@@ -6,7 +6,7 @@ use bevy_ecs::prelude::*;
 use macroquad::prelude::*;
 use pixels_canvas::prelude::*;
 
-use crate::state::Placer;
+use crate::state::ImageWorker;
 
 use super::{CanvasContainer, State, ToolType};
 use pixels_util::color::Color;
@@ -102,15 +102,13 @@ pub fn update_tool_place(mut state: ResMut<State>, mut container: ResMut<CanvasC
     if !container.canvas.get_cooldown_object().is_ended(){
         return;
     }
-    if let ToolType::Placer(Placer::Image(Some(image))) = &state.selected_tool{
+    if let ImageWorker::Image(Some(image)) = &state.image_worker{
         if is_mouse_button_pressed(MouseButton::Left){
             let mouse_pos = super::mouse_world_pos(state.camera_state.instance);
-            state.selected_tool = ToolType::Placer(Placer::Working(image.get_pixels().into_iter(), (mouse_pos.x as u32, mouse_pos.y as u32)))
+            state.image_worker = ImageWorker::Working(image.get_pixels().into_iter(), (mouse_pos.x as u32, mouse_pos.y as u32));
         }
-    }else if let ToolType::Placer(Placer::Working(iterator, (mouse_x, mouse_y))) = &mut state.selected_tool{
+    }else if let ImageWorker::Working(iterator, (mouse_x, mouse_y)) = &mut state.image_worker{
         if let Some(((pos_x, pos_y), color)) = iterator.next(){
-            
-            println!("{color:?}");
             container.canvas.set_pixel(*mouse_x + pos_x, *mouse_y + pos_y, color).expect("Bir sorun oluştu!");
         }
     }

@@ -87,11 +87,11 @@ impl IntoIterator for &Pixels{
     }
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct PixelsIntoIterator {
     pixels: Pixels,
-    x: u32,
-    y: u32,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl PixelsIntoIterator {

@@ -6,7 +6,7 @@ use bevy_ecs::prelude::*;
 use macroquad::prelude::*;
 use pixels_canvas::prelude::*;
 
-use crate::state::{ToolType, Placer};
+use crate::state::ImageWorker;
 use pixels_util::color::Color;
 
 use super::State;
@@ -91,13 +91,18 @@ pub fn draw_image(mut state: ResMut<State>, mut container: ResMut<CanvasContaine
     let pos = super::mouse_world_pos(state.camera_state.instance);
 
     container.canvas.get_image_layer_mut().clean();
-
-    if let ToolType::Placer(Placer::Image(Some(image))) = &mut state.selected_tool{
-        image.set_position(pos.x as u32, pos.y as u32);
-        container
+    match &mut state.image_worker{
+        ImageWorker::Image(Some(image)) => {
+            image.set_position(pos.x as u32, pos.y as u32);
+            container
             .canvas
             .get_image_layer_mut()
             .draw(image.clone());
+        },
+        ImageWorker::Working(iterator, pos) => {
+            container.canvas.get_image_layer_mut().draw_iterator(*pos, iterator.clone());
+        }
+        _ => {}
     }
 }
 

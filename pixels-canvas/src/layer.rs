@@ -1,3 +1,5 @@
+
+
 use pixels_util::prelude::*;
 
 use crate::prelude::Element;
@@ -42,6 +44,12 @@ impl Layer {
     pub fn draw(&mut self, element: Element) {
         for ((x, y), color) in element.get_pixels() {
             let pos = element.get_position();
+            self.pixels.set(x + pos.0, y + pos.1, color);
+        }
+    }
+
+    pub fn draw_iterator(&mut self, pos:(u32, u32), iterator: PixelsIntoIterator){
+        for ((x, y), color) in iterator {
             self.pixels.set(x + pos.0, y + pos.1, color);
         }
     }
