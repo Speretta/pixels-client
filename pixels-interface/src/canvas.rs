@@ -6,7 +6,7 @@ use bevy_ecs::prelude::*;
 use macroquad::prelude::*;
 use pixels_canvas::prelude::*;
 
-use crate::state::ToolType;
+use crate::state::{ToolType, Placer};
 use pixels_util::color::Color;
 
 use super::State;
@@ -72,7 +72,7 @@ pub fn update(
 }
 
 pub fn draw(state: Res<State>, container: Res<CanvasContainer>) {
-    for ((x, y), color) in container.canvas.get_layers_merged().iter() {
+    for ((x, y), color) in container.canvas.get_layers_merged().get_pixels() {
         draw_rectangle(
             x as f32,
             y as f32,
@@ -92,20 +92,12 @@ pub fn draw_image(mut state: ResMut<State>, mut container: ResMut<CanvasContaine
 
     container.canvas.get_image_layer_mut().clean();
 
-    if state.selected_tool != ToolType::Placer {
-        return;
-    }
-
-    if state.image.is_some() {
-        state
-            .image
-            .as_mut()
-            .unwrap()
-            .set_position(pos.x as u32, pos.y as u32);
+    if let ToolType::Placer(Placer::Image(Some(image))) = &mut state.selected_tool{
+        image.set_position(pos.x as u32, pos.y as u32);
         container
             .canvas
             .get_image_layer_mut()
-            .draw(state.image.clone().unwrap());
+            .draw(image.clone());
     }
 }
 

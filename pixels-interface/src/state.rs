@@ -4,13 +4,13 @@ use egui_macroquad::egui::Rect;
 use bevy_ecs::prelude::*;
 use macroquad::prelude::*;
 use pixels_canvas::prelude::*;
+use pixels_util::prelude::PixelsIntoIterator;
 
 #[derive(Resource)]
 pub struct State {
     pub focus: bool,
     pub color: [f32; 3],
     pub cooldown: f32,
-    pub image: Option<Element>,
     pub selected_tool: ToolType,
     pub camera_state: CameraState,
     pub menu_state: MenuState,
@@ -31,18 +31,17 @@ pub struct MenuState {
     pub picker_icon: RetainedImage,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq)]
 pub enum ToolType {
     Mover,
     Brush,
     Picker,
-    Placer,
+    Placer(Placer),
 }
 
 impl State {
     pub fn new() -> Self {
         State {
-            image: None,
             focus: false,
             color: [1.0; 3],
             cooldown: 0.0,
@@ -91,3 +90,16 @@ impl Default for MenuState {
         }
     }
 }
+
+pub enum Placer{
+    Working(PixelsIntoIterator, (u32 ,u32)),
+    Image(Option<Element>),
+}
+
+impl PartialEq for Placer{
+    fn eq(&self, other: &Self) -> bool {
+        std::mem::discriminant(self) == std::mem::discriminant(other)
+    }
+}
+
+impl Eq for Placer{}

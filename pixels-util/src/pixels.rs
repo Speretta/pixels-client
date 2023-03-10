@@ -4,7 +4,8 @@ use std::path::Path;
 
 use super::prelude::*;
 
-#[derive(Clone)]
+
+#[derive(Clone,PartialEq, Debug)]
 pub struct Pixels {
     size: (u32, u32),
     data: Vec<Vec<Color>>,
@@ -67,32 +68,39 @@ impl Pixels {
     pub fn overlay(&self, other: &Pixels, alpha: f32) -> Pixels {
         let mut result = Pixels::new(self.size);
 
-        for ((x, y), src) in self.iter() {
+        for ((x, y), src) in self {
             let dst = other.get(x, y).unwrap();
             result.set(x, y, src.merge_alpha(dst, alpha));
         }
 
         result
     }
+}
 
-    pub fn iter(&self) -> PixelsIterator {
-        PixelsIterator::new(self.clone())
+impl IntoIterator for &Pixels{
+    type Item = ((u32, u32), Color);
+
+    type IntoIter = PixelsIntoIterator;
+
+    fn into_iter(self) -> Self::IntoIter {
+        PixelsIntoIterator::new(self)
     }
 }
 
-pub struct PixelsIterator {
+#[derive(PartialEq, Debug)]
+pub struct PixelsIntoIterator {
     pixels: Pixels,
     x: u32,
     y: u32,
 }
 
-impl PixelsIterator {
-    fn new(pixels: Pixels) -> Self {
-        Self { pixels, x: 0, y: 0 }
+impl PixelsIntoIterator {
+    fn new(pixels: &Pixels) -> Self {
+        Self { pixels: pixels.clone(), x: 0, y: 0 }
     }
 }
 
-impl Iterator for PixelsIterator {
+impl Iterator for PixelsIntoIterator {
     type Item = ((u32, u32), Color);
 
     fn next(&mut self) -> Option<Self::Item> {

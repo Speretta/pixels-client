@@ -1,4 +1,3 @@
-use pixels_util::pixels::PixelsIterator;
 use std::path::Path;
 
 use pixels_util::prelude::*;
@@ -25,7 +24,8 @@ impl Element {
         self.position
     }
 
-    pub fn iter(&self) -> PixelsIterator {
-        self.pixels.iter()
+    pub fn get_pixels(&self) -> &Pixels{
+        &self.pixels
     }
 }
+

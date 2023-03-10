@@ -56,6 +56,10 @@ impl Canvas {
         self.cooldown.remaining()
     }
 
+    pub fn get_cooldown_object(&self) -> &Cooldown{
+        &self.cooldown
+    }
+
     fn add_layer(&mut self, layer: Layer) {
         self.layers.push(layer)
     }

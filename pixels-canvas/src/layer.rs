@@ -40,7 +40,7 @@ impl Layer {
     }
 
     pub fn draw(&mut self, element: Element) {
-        for ((x, y), color) in element.iter() {
+        for ((x, y), color) in element.get_pixels() {
             let pos = element.get_position();
             self.pixels.set(x + pos.0, y + pos.1, color);
         }
@@ -57,7 +57,7 @@ impl Layer {
         self.pixels = Pixels::new(self.pixels.size())
     }
 
-    pub fn iter(&self) -> PixelsIterator {
-        self.pixels.iter()
+    pub fn get_pixels(&self) -> &Pixels{
+        &self.pixels
     }
 }

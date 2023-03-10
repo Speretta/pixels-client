@@ -6,7 +6,7 @@ pub mod prelude {
     pub use crate::{
         color::{Color, ColorMode},
         cooldown::Cooldown,
-        pixels::{Pixels, PixelsIterator},
+        pixels::{Pixels, PixelsIntoIterator},
     };
 }
 

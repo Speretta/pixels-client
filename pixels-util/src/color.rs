@@ -8,7 +8,7 @@ pub enum ColorMode {
     RGB,
 }
 
-#[derive(Copy, Clone, Default)]
+#[derive(Copy, Clone, Default, PartialEq, Debug)]
 pub struct Color {
     pub r: f32,
     pub g: f32,

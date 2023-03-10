@@ -7,7 +7,7 @@ use pixels_canvas::prelude::Element;
 
 use super::{State, ToolType};
 
-use crate::{file_dialog::FileDialog, panel, tool_button};
+use crate::{file_dialog::FileDialog, panel, tool_button, state::Placer};
 
 struct ToolButton {
     selected: bool,
@@ -63,11 +63,10 @@ pub fn draw(state: ResMut<State>, mut file_dialog: NonSendMut<FileDialog>) {
             ctx,
             ui,
             state,
-            ToolType::Placer,
+            ToolType::Placer(Placer::Image(None)),
             state.menu_state.image_icon,
             {
-                state.selected_tool = ToolType::Placer;
-                state.image = file_dialog.show().map(Element::new);
+                state.selected_tool = ToolType::Placer(Placer::Image(file_dialog.show().map(Element::new)));
             }
         );
     });
